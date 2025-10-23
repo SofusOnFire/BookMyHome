@@ -10,9 +10,8 @@ namespace Domain.Models
     {
         public int Id { get; init; }
         public string Description { get; set; }
-        public Facility(string description)
-        {
-            Description = description;
-        }
+
+        // EF mapping
+        public List<FacilityBridge> FacilityBridges { get; set; }
     }
 }

@@ -20,14 +20,8 @@ namespace xUnitTests
         3) BookingDate == StarteDate + EndDate
         4) EndDate > StartDate
         5) Ingen overlap -> "OverlappingBookingException"
-            Man kan ikke booke i fortiden.
+            Man kan ikke booke i fortiden. */
 
-        public int Id { get; init; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public string ApprovalStatus { get; set; }
-        public DateTime CreationDate { get; set; }
-        */
         [Fact]
         public void BookingCreation_ShouldPass_WhenGivenCorrectInformation()
         {
@@ -62,16 +56,5 @@ namespace xUnitTests
             Assert.Throws<Exception>(
                 () => new Booking(accomodationId, startTime, endTime, approvalStatus, creationDate));
         }
-
-        //Booking sker kun på dato - dvs.uden angivelse af tidspunkt, men blot start dato og slutdato
-
-
-        //En booking er fra og med startdato til og med slutdato
-
-        //Slutdato skal ligge efter startdato
-
-
-        //Der må ikke være overlappende bookings. Dvs.
-        //    Ved opret og redigering af booking skal det tjekkes at der ikke opstår overlappende bookings.Sker det skal der kastes en Custom exception - "OverlapingBookingException"
     }
 }

@@ -9,17 +9,20 @@ namespace Domain.Models
     public class Booking
     {
         public int Id { get; init; }
-        public int AccomodationId { get; set; }
+        public int AccommodationId { get; set; }
+        public int UserId { get; set; }
         public DateOnly StartTime { get; set; }
         public DateOnly EndTime { get; set; }
         public string ApprovalStatus { get; set; }
         public DateTime CreationDate { get; set; }
 
-        public Accomodation Accomodation { get; }
+        // EF mapping
+        public Accommodation Accommodation { get; }
+        public User User { get; }
 
-        public Booking(int accomodationId, DateOnly startTime, DateOnly endTime, string approvalStatus, DateTime creationDate)
+        public Booking(int accommodationId, DateOnly startTime, DateOnly endTime, string approvalStatus, DateTime creationDate)
         {
-            AccomodationId = accomodationId;
+            AccommodationId = accommodationId;
             StartTime = startTime;
             EndTime = endTime;
             ApprovalStatus = approvalStatus;
@@ -28,9 +31,9 @@ namespace Domain.Models
             ValidateBookingInformation();
         }
 
-        public Booking(int accomodationId, DateOnly startTime, DateOnly endTime)
+        public Booking(int accommodationId, DateOnly startTime, DateOnly endTime)
         {
-            AccomodationId = accomodationId;
+            AccommodationId = accommodationId;
             StartTime = startTime;
             EndTime = endTime;
             ApprovalStatus = "Pending";
