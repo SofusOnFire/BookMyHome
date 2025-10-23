@@ -9,17 +9,34 @@ namespace Domain.Booking
     public class Booking
     {
         public int Id { get; init; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateOnly StartTime { get; set; }
+        public DateOnly EndTime { get; set; }
         public string ApprovalStatus { get; set; }
         public DateTime CreationDate { get; set; }
 
-        public Booking(DateTime startTime, DateTime endTime, string approvalStatus, DateTime creationDate)
+        public Booking(int id, DateOnly startTime, DateOnly endTime, string approvalStatus, DateTime creationDate)
         {
+            Id = id;
             StartTime = startTime;
             EndTime = endTime;
             ApprovalStatus = approvalStatus;
             CreationDate = creationDate;
+
+            ValidateBookingInformation();
         }
+
+        private void ValidateBookingInformation()
+        {
+            if (StartTime < DateOnly.FromDateTime(DateTime.Now))
+            {
+                throw new Exception();
+            }
+
+            if (StartTime > EndTime)
+            {
+                throw new Exception();
+            }
+        }
+
     }
 }
