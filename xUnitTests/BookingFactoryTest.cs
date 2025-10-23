@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Net;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Domain.FactoryInterfaces;
 using Domain.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Application;
+using Moq;
+using Common.CustomExceptions;
 
 namespace xUnitTests
 {
-	public class BookingEntityTest
+	public class BookingFactoryTest
 	{
-
 		//Domain laget for Booking - incl.relevante unit test til nedestående - implementeres.Der er følgende domæne regler:
 		//Man kan ikke booke i fortiden.
 		//Booking sker kun på dato - dvs.uden angivelse af tidspunkt, men blot start dato og slutdato
@@ -36,64 +33,62 @@ namespace xUnitTests
         public string ApprovalStatus { get; set; }
         public DateTime CreationDate { get; set; }
 		*/
-
-		//1) BookingDate < Datetime.Now
 		[Fact]
 		public static void BookingCreation_ShouldPass_WhenGivenCorrectInformation()
 		{
-			// Arrange
-			int id = 1;
+			// Arrange'
 			int accomodationId = 1;
 			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now);
 			DateOnly endTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
 			string approvalStatus = "Pending";
 			DateTime creationDate = DateTime.Parse(DateTime.Now.ToShortTimeString());
+			Mock<IBookingQueryRepository> repository = new Mock<IBookingQueryRepository>();
+
+
+			BookingFactory bookingFactory = new BookingFactory(repository.Object);
 
 			// Act
-			Booking booking = new Booking(id, accomodationId, startTime, endTime, approvalStatus, creationDate);
+			Booking booking = bookingFactory.CreateBooking(startTime, endTime, accomodationId);
 
 
 			// Assert
-			Assert.Equal(id, booking.Id);
 			Assert.Equal(startTime, booking.StartTime);
 			Assert.Equal(endTime, booking.EndTime);
 			Assert.Equal(approvalStatus, booking.ApprovalStatus);
 			Assert.Equal(creationDate, booking.CreationDate);
 		}
 
-		//1) BookingDate < Datetime.Now
 		[Fact]
-		public static void BookingCreation_ShouldThrowError_WhenGivenStartDateFromThePast()
+		public static void BookingCreation_ShouldGiveOverlapingBookingException_WhenGivenABookingDurationWhichIsOverlappingWithExistingBookings()
 		{
-			// Arrange
-			int id = 1;
+			// Test Entity Arrange
 			int accomodationId = 1;
-			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now.AddDays(-2));
+			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now);
 			DateOnly endTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
-			string approvalStatus = "Pending";
-			DateTime creationDate = DateTime.Parse(DateTime.Now.ToShortTimeString());
+
+			// Moq Arrange
+			int moqId = 1;
+			int moqAccomodationId = 1;
+			DateOnly moqStartTime = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
+			DateOnly moqEndTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
+			string moqApprovalStatus = "Approved";
+			DateTime mogCreationDate = DateTime.Parse(DateTime.Now.ToShortTimeString());
+
+			List<Booking> iBookingQueryReponseList = new List<Booking>();
+			iBookingQueryReponseList.Add(new Booking(moqId, moqAccomodationId, moqStartTime, moqEndTime, moqApprovalStatus, mogCreationDate));
+
+			Mock<IBookingQueryRepository> repository = new Mock<IBookingQueryRepository>();
+			repository
+				.Setup(repo => repo.GetAllBookingWithinTimespanGivenAccomodationId(startTime, endTime, accomodationId))
+				.Returns(iBookingQueryReponseList);
+				
+
+			BookingFactory bookingFactory = new BookingFactory(repository.Object);
 
 			// Act
 			// Assert
-			Assert.Throws<Exception>(
-				() => new Booking(id, accomodationId, startTime, endTime, approvalStatus, creationDate));
-		}
-
-		//4) EndDate > StartDate
-		[Fact]
-		public static void BookingCreation_ShouldThrowError_WhenGivenStartDateIsLaterThanEndDate()
-		{
-			// Arrange
-			int id = 1;
-			int accomodationId = 1;
-			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
-			DateOnly endTime = DateOnly.FromDateTime(DateTime.Now);
-			string approvalStatus = "Pending";
-			DateTime creationDate = DateTime.Parse(DateTime.Now.ToShortTimeString());
-
-			// Assert
-			Assert.Throws<Exception>(
-				() => new Booking(id, accomodationId, startTime, endTime, approvalStatus, creationDate));
+			Assert.Throws<OverlappingBookingException>(
+				() => bookingFactory.CreateBooking(startTime, endTime, accomodationId));
 		}
 	}
 }
