@@ -12,10 +12,8 @@ namespace Domain.Models
         public string Email { get; set; }
         public string Language { get; set; }
 
-        public User(string email, string language)
-        {
-            Email = email;
-            Language = language;
-        }
+        public List<Accomodation> Accomodations { get; }
+        public List<Booking> Bookings { get; }
+
     }
 }

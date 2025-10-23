@@ -9,16 +9,19 @@ namespace Domain.Models
     public class Booking
     {
         public int Id { get; init; }
+        public int UserId { get; set; }
         public int AccomodationId { get; set; }
 		public DateOnly StartTime { get; set; }
         public DateOnly EndTime { get; set; }
         public string ApprovalStatus { get; set; }
         public DateTime CreationDate { get; set; }
-        public Accomodation accomodation { get; }
+        public Accomodation Accomodation { get; }
+        public User User { get; }
 
-        public Booking(int id, int accomodationId, DateOnly startTime, DateOnly endTime, string approvalStatus, DateTime creationDate)
+        public Booking(int id, int userId, int accomodationId, DateOnly startTime, DateOnly endTime, string approvalStatus, DateTime creationDate)
         {
             Id = id;
+            UserId = userId;
             AccomodationId = accomodationId;
             StartTime = startTime;
             EndTime = endTime;
@@ -28,9 +31,10 @@ namespace Domain.Models
             ValidateBookingInformation();
         }
 
-		public Booking(DateOnly startTime, DateOnly endTime, int accomodationId)
+		public Booking(DateOnly startTime, DateOnly endTime, int accomodationId, int userId)
 		{
 			AccomodationId = accomodationId;
+            UserId= userId;
 			StartTime = startTime;
 			EndTime = endTime;
             ApprovalStatus = "Pending";

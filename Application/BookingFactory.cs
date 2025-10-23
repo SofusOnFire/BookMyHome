@@ -19,7 +19,7 @@ namespace Application
 			_repository = repository;
 		}
 
-		public Booking CreateBooking(DateOnly startTime, DateOnly endTime, int accomodationId)
+		public Booking CreateBooking(DateOnly startTime, DateOnly endTime, int accomodationId, int userId)
 		{
 			IEnumerable<Booking> potentielOverlappingBooking = _repository.GetAllBookingWithinTimespanGivenAccomodationId(startTime, endTime, accomodationId);
 
@@ -28,7 +28,7 @@ namespace Application
 				throw new OverlappingBookingException();
 			}
 
-			return new Booking(startTime, endTime, accomodationId);
+			return new Booking(startTime, endTime, accomodationId, userId);
 		}
 	}
 }

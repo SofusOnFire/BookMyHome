@@ -9,7 +9,7 @@ namespace Domain.FactoryInterfaces
 {
 	public interface IBookingFactory
 	{
-		public Booking CreateBooking(DateOnly startTime, DateOnly endTime, int accomodationId);
+		public Booking CreateBooking(DateOnly startTime, DateOnly endTime, int accomodationId, int userId);
 
 		/*
 		public int Id { get; init; }
