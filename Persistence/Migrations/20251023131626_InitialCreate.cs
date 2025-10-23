@@ -59,8 +59,7 @@ namespace Persistence.Migrations
                         name: "FK_Accommodation_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -83,14 +82,12 @@ namespace Persistence.Migrations
                         name: "FK_Booking_Accommodation_AccommodationId",
                         column: x => x.AccommodationId,
                         principalTable: "Accommodation",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Booking_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -109,14 +106,12 @@ namespace Persistence.Migrations
                         name: "FK_FacilityBridge_Accommodation_AccommodationId",
                         column: x => x.AccommodationId,
                         principalTable: "Accommodation",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_FacilityBridge_Facility_FacilityId",
                         column: x => x.FacilityId,
                         principalTable: "Facility",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

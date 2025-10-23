@@ -20,7 +20,8 @@ namespace Persistence.EntityFrameworkModelConfigurations
 
             builder.HasMany(facility => facility.FacilityBridges)
                 .WithOne(facilityBridges => facilityBridges.Facility)
-                .HasForeignKey(facilityBridges => facilityBridges.FacilityId);
+                .HasForeignKey(facilityBridges => facilityBridges.FacilityId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

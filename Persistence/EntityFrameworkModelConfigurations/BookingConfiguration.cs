@@ -20,11 +20,13 @@ namespace Persistence.EntityFrameworkModelConfigurations
 
             builder.HasOne(booking => booking.Accommodation)
                 .WithMany(accommodation => accommodation.Bookings)
-                .HasForeignKey(booking => booking.AccommodationId);
+                .HasForeignKey(booking => booking.AccommodationId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(booking => booking.User)
                 .WithMany(user => user.Bookings)
-                .HasForeignKey(booking => booking.UserId);
+                .HasForeignKey(booking => booking.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

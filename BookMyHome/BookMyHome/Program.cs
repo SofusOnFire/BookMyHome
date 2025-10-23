@@ -1,5 +1,6 @@
 using BookMyHome.Client.Pages;
 using BookMyHome.Components;
+using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddDbContext<MSSQLServerDbContext>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

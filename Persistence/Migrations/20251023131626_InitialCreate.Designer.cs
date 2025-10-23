@@ -12,7 +12,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(MSSQLServerDbContext))]
-    [Migration("20251023125831_InitialCreate")]
+    [Migration("20251023131626_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -167,7 +167,7 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Models.User", "User")
                         .WithMany("Accommodations")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -178,13 +178,13 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Models.Accommodation", "Accommodation")
                         .WithMany("Bookings")
                         .HasForeignKey("AccommodationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Models.User", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Accommodation");
@@ -197,13 +197,13 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Models.Accommodation", "Accommodation")
                         .WithMany("FacilityBridges")
                         .HasForeignKey("AccommodationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Models.Facility", "Facility")
                         .WithMany("FacilityBridges")
                         .HasForeignKey("FacilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Accommodation");
