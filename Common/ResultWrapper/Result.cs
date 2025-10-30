@@ -30,5 +30,9 @@ namespace Common.ResultWrapper
 		{
 			return new FailureResult<T>(value, exception);
 		}
+
+		public bool IsSuccess { get {return this is SuccessResult<T>;} }
+		public bool IsFailure { get { return this is FailureResult<T>; } }
+		public bool IsConflict { get { return this is ConflictResult<T>; } }
 	}
 }

@@ -25,37 +25,45 @@ namespace Application.Services
         public async Task<Result<Accommodation>> UpdateAccommodationAsync(AccommodationUpdateDto accommodationUpdateDto)
         {
             _unit.BeginTransaction();
-
-            Result<Accommodation> accommodation = await _unit.AccommodationRepository.GetAccommodationByIdAsync(accommodationUpdateDto.Id);
-            if(accommodation is not SuccessResult<Accommodation>)
+            try
             {
-                _unit.Rollback();
-                return accommodation;
+				Result<Accommodation> accommodation = await _unit.AccommodationRepository.GetAccommodationByIdAsync(accommodationUpdateDto.Id);
+				if (!accommodation.IsSuccess)
+				{
+					_unit.Rollback();
+					return accommodation;
+				}
+
+				AccommodationUpdateModelDto accommodationUpdateModelDto = new AccommodationUpdateModelDto()
+				{
+					UserId = accommodationUpdateDto.UserId,
+					Price = accommodationUpdateDto.Price,
+					HouseRules = accommodationUpdateDto.HouseRules,
+					Photo = accommodationUpdateDto.Photo,
+					Availability = accommodationUpdateDto.Availability,
+					RowVersion = accommodationUpdateDto.RowVersion
+				};
+
+				accommodation.OrignalValue!.UpdateAccommodationModel(accommodationUpdateModelDto);
+
+				Result<Accommodation> result = await _unit.AccommodationRepository.UpdateAccommodationAsync(accommodation.OrignalValue!);
+				if (result.IsSuccess)
+				{
+					_unit.Commit();
+					return result;
+				}
+				else
+				{
+					_unit.Rollback();
+					return result;
+				}
+			}
+            catch (Exception ex)
+            {
+				_unit.Rollback();
+				return Result<Accommodation>.Failure(null, ex);
             }
 
-            AccommodationUpdateModelDto accommodationUpdateModelDto = new AccommodationUpdateModelDto()
-            {
-                UserId = accommodationUpdateDto.UserId,
-                Price = accommodationUpdateDto.Price,
-                HouseRules = accommodationUpdateDto.HouseRules,
-                Photo = accommodationUpdateDto.Photo,
-                Availability = accommodationUpdateDto.Availability,
-                RowVersion = accommodationUpdateDto.RowVersion
-            };
-
-            accommodation.OrignalValue!.UpdateAccommodationModel(accommodationUpdateModelDto);
-
-            Result<Accommodation> result = await _unit.AccommodationRepository.UpdateAccommodationAsync(accommodation.OrignalValue!);
-            if(result is SuccessResult<Accommodation>)
-            {
-                _unit.Commit();
-                return result;
-            }
-            else
-            {
-                _unit.Rollback();
-                return result;
-            }
         }
     }
 }
