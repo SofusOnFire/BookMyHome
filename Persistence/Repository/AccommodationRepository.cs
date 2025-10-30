@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using Application.RepositoryInterfaces;
 using Common;
+using Common.ResultWrapper;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,21 +22,22 @@ namespace Persistence.Repository
         }
 
         // CREATE
-        public async Task<Accommodation> GetAccommodationByIdAsync(int id)
+        public async Task<Result<Accommodation>> GetAccommodationByIdAsync(int id)
         {
             Accommodation? accommodation;
 
             try
             {
                 accommodation = await _context.Accomodations
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                    .FirstAsync(x => x.Id == id);
+
+                return Result<Accommodation>.Success(accommodation);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception("Kunne ikke finde");
+                return Result<Accommodation>.Failure(null, ex);
             }
 
-            return accommodation;
         }
 
         // READ
@@ -55,6 +57,10 @@ namespace Persistence.Repository
             {
                 Accommodation currentValue = await _context.Accomodations.FirstAsync(x => x.Id == accommodation.Id);
                 return Result<Accommodation>.Conflict(accommodation,currentValue);
+            }
+            catch (Exception ex)
+            {
+                return Result<Accommodation>.Failure(accommodation, ex);
             }
         }
 

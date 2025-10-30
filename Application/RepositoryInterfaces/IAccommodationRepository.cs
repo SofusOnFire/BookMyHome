@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Common;
+using Common.ResultWrapper;
 using Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Application.RepositoryInterfaces
     public interface IAccommodationRepository
     {
         // READ
-        public Task<Accommodation> GetAccommodationByIdAsync(int id);
+        public Task<Result<Accommodation>> GetAccommodationByIdAsync(int id);
         public Task<IEnumerable<Accommodation>> GetAllAsync();
 
         // UPDATE
