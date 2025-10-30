@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.RepositoryInterfaces;
+using Common;
 using Domain.ModelDTOs;
 using Domain.Models;
 using System;
@@ -12,20 +13,20 @@ namespace Application.Services
 {
     public class AccommodationService
     {
-        private IUnitOfWork _uow;
+        private IUnitOfWork _unit;
 
-        public AccommodationService(IUnitOfWork uow)
+        public AccommodationService(IUnitOfWork unit)
         {
-            _uow = uow;
+            _unit = unit;
         }
 
-        public async Task<bool> UpdateAccommodationAsync(AccommodationUpdateDto accommodationUpdateDto)
+        public async Task<Result<Accommodation>> UpdateAccommodationAsync(AccommodationUpdateDto accommodationUpdateDto)
         {
-            _uow.BeginTransaction();
+            _unit.BeginTransaction();
 
             try
             {
-                Accommodation accommodation = await _uow.AccommodationRepository.GetAccommodationByIdAsync(accommodationUpdateDto.Id);
+                Accommodation accommodation = await _unit.AccommodationRepository.GetAccommodationByIdAsync(accommodationUpdateDto.Id);
 
                 AccommodationUpdateModelDto accommodationUpdateModelDto = new AccommodationUpdateModelDto()
                 {
@@ -39,17 +40,15 @@ namespace Application.Services
 
                 accommodation.UpdateAccommodationModel(accommodationUpdateModelDto);
 
-                await _uow.AccommodationRepository.UpdateAccommodationAsync(accommodation);
+                Result<Accommodation> result = await _unit.AccommodationRepository.UpdateAccommodationAsync(accommodation);
 
-                _uow.Commit();
+                _unit.Commit();
 
-                return true;
+                return result;
             }
             catch (Exception)
             {
-                _uow.Rollback();
-
-                return false;
+                _unit.Rollback();
             }
         }
     }

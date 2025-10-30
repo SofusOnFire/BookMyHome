@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.RepositoryInterfaces;
+using Common;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -40,7 +41,7 @@ namespace Persistence.Repository
         // READ
 
         // UPDATE
-        public async Task<bool> UpdateAccommodationAsync(Accommodation accommodation)
+        public async Task<Result<Accommodation>> UpdateAccommodationAsync(Accommodation accommodation)
         {
             try
             {
@@ -48,11 +49,12 @@ namespace Persistence.Repository
 
                 await _context.SaveChangesAsync();
 
-                return true;
+                return Result<Accommodation>.Success(accommodation);
             }
             catch (DbUpdateConcurrencyException)
             {
-                throw;
+                Accommodation currentValue = await _context.Accomodations.FirstAsync(x => x.Id == accommodation.Id);
+                return Result<Accommodation>.Conflict(accommodation,currentValue);
             }
         }
 

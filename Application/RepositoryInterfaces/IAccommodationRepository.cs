@@ -1,4 +1,5 @@
 ﻿using Application.DTO;
+using Common;
 using Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,6 @@ namespace Application.RepositoryInterfaces
         public Task<IEnumerable<Accommodation>> GetAllAsync();
 
         // UPDATE
-        public Task<bool> UpdateAccommodationAsync(Accommodation accommodation);
+        public Task<Result<Accommodation>> UpdateAccommodationAsync(Accommodation accommodation);
     }
 }
