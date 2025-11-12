@@ -16,6 +16,6 @@ namespace Application.RepositoryInterfaces
         public Task<IEnumerable<Accommodation>> GetAllAsync();
 
         // UPDATE
-        public Task<Result<Accommodation>> UpdateAccommodationAsync(Accommodation accommodation);
+        public Task<IResult<Accommodation>> UpdateAccommodationAsync(Accommodation accommodation);
     }
 }

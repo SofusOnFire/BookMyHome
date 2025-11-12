@@ -41,7 +41,7 @@ namespace Persistence.Repository
         // READ
 
         // UPDATE
-        public async Task<Result<Accommodation>> UpdateAccommodationAsync(Accommodation accommodation)
+        public async Task<IResult<Accommodation>> UpdateAccommodationAsync(Accommodation accommodation)
         {
             try
             {
@@ -51,10 +51,11 @@ namespace Persistence.Repository
 
                 return Result<Accommodation>.Success(accommodation);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 Accommodation currentValue = await _context.Accomodations.FirstAsync(x => x.Id == accommodation.Id);
-                return Result<Accommodation>.Conflict(accommodation,currentValue);
+
+                return Result<Accommodation>.Conflict(accommodation, currentValue, ex);
             }
         }
 

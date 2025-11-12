@@ -1,56 +1,113 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Common
+﻿namespace Common
 {
-    public class Result<T>
+    /// <summary>
+    /// Generic wrapper which makes it possible to handle errors and responses in a control manner.
+    /// </summary>
+    public class Result<T> : IResult<T>, IResultConflict<T>, IResultError<T>, IResultSuccess<T>
     {
-        public ResultType Type { get; }
-        private readonly T _value;
-        private readonly T? _currentValue;
-        public enum ResultType { Success, Conflict, Failure }
+        public T OriginalType { get; }
+        public T? CurrentType { get; }
+        public Exception? Exception { get; }
+        public ResultType Outcome { get; private set; }
+        public enum ResultType { Success, Conflict, Error }
 
-        public Result(ResultType type, T value)
+        public Result(T originalType)
         {
-            Type = type;
-            _value = value;
+            OriginalType = originalType;
         }
 
-        public Result(ResultType type, T value, T? currentValue) : this(type, value)
+        public Result(T originalType, Exception exception)
         {
-            _currentValue = currentValue;
+            OriginalType = originalType;
+            Exception = exception;
         }
 
-        public T GetValue()
+        public Result(T originalType, T currentType, Exception exception)
         {
-            return _value;
+            OriginalType = originalType;
+            CurrentType = currentType;
+            Exception = exception;
         }
-        public T GetCurrentValue()
+
+        public bool IsSucces()
         {
-            if (Type == ResultType.Conflict)
+            if (Outcome == ResultType.Success)
             {
-                return _currentValue!;
+                return true;
             }
 
-            throw new InvalidOperationException();
+            return false;
         }
 
-        public static Result<T> Success(T value)
+        public IResultSuccess<T> GetSuccess()
         {
-            var result = new Result<T>(ResultType.Success, value);
-
-            return result;
+            return this;
         }
 
-        public static Result<T> Conflict(T originalValue, T currentValue)
+        public bool IsError()
         {
-            Result<T> result = new Result<T>(ResultType.Conflict, originalValue, currentValue);
+            if (Outcome == ResultType.Error)
+            {
+                return true;
+            }
 
-            return result;
+            return false;
+        }
+
+        public IResultError<T> GetError()
+        {
+            return this;
+        }
+
+        public bool IsConflict()
+        {
+            if (Outcome == ResultType.Conflict)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public IResultConflict<T> GetConflict()
+        {
+            return this;
+        }
+
+        /// <summary>
+        /// Gives the wrapper a successful response
+        /// </summary>
+        public static Result<T> Success(T originalType)
+        {
+            Result<T> instance = new Result<T>(originalType);
+
+            instance.Outcome = ResultType.Success;
+
+            return instance;
+        }
+
+        /// <summary>
+        /// Gives the wrapper a conflict response
+        /// </summary>
+        public static Result<T> Conflict(T originalType, T currentType, Exception exception)
+        {
+            Result<T> instance = new Result<T>(originalType, currentType, exception);
+
+            instance.Outcome = ResultType.Conflict;
+
+            return instance;
+        }
+
+        /// <summary>
+        /// Gives the wrapper an error response
+        /// </summary>
+        public static Result<T> Error(T originalType, Exception exception) 
+        {
+            Result<T> instance = new Result<T>(originalType, exception);
+
+            instance.Outcome = ResultType.Error;
+
+            return instance;
         }
     }
 }

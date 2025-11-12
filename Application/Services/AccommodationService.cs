@@ -20,36 +20,36 @@ namespace Application.Services
             _unit = unit;
         }
 
-        public async Task<Result<Accommodation>> UpdateAccommodationAsync(AccommodationUpdateDto accommodationUpdateDto)
+        public async Task<IResult<Accommodation>> UpdateAccommodationAsync(AccommodationUpdateDto accommodationUpdateDto)
         {
             _unit.BeginTransaction();
 
-            try
+            Accommodation accommodation = await _unit.AccommodationRepository.GetAccommodationByIdAsync(accommodationUpdateDto.Id);
+
+            AccommodationUpdateModelDto accommodationUpdateModelDto = new AccommodationUpdateModelDto()
             {
-                Accommodation accommodation = await _unit.AccommodationRepository.GetAccommodationByIdAsync(accommodationUpdateDto.Id);
+                UserId = accommodationUpdateDto.UserId,
+                Price = accommodationUpdateDto.Price,
+                HouseRules = accommodationUpdateDto.HouseRules,
+                Photo = accommodationUpdateDto.Photo,
+                Availability = accommodationUpdateDto.Availability,
+                RowVersion = accommodationUpdateDto.RowVersion
+            };
 
-                AccommodationUpdateModelDto accommodationUpdateModelDto = new AccommodationUpdateModelDto()
-                {
-                    UserId = accommodationUpdateDto.UserId,
-                    Price = accommodationUpdateDto.Price,
-                    HouseRules = accommodationUpdateDto.HouseRules,
-                    Photo = accommodationUpdateDto.Photo,
-                    Availability = accommodationUpdateDto.Availability,
-                    RowVersion = accommodationUpdateDto.RowVersion
-                };
+            accommodation.UpdateAccommodationModel(accommodationUpdateModelDto);
 
-                accommodation.UpdateAccommodationModel(accommodationUpdateModelDto);
+            IResult<Accommodation> result = await _unit.AccommodationRepository.UpdateAccommodationAsync(accommodation);
 
-                Result<Accommodation> result = await _unit.AccommodationRepository.UpdateAccommodationAsync(accommodation);
-
+            if (result.IsSucces() == true)
+            {
                 _unit.Commit();
-
-                return result;
             }
-            catch (Exception)
+            else 
             {
                 _unit.Rollback();
             }
+
+            return result;
         }
     }
 }
