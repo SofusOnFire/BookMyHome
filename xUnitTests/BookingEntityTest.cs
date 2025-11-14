@@ -44,17 +44,20 @@ namespace xUnitTests
 			// Arrange
 			int id = 1;
 			int accomodationId = 1;
+			int userId = 1;
 			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now);
 			DateOnly endTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
 			string approvalStatus = "Pending";
 			DateTime creationDate = DateTime.Parse(DateTime.Now.ToShortTimeString());
 
 			// Act
-			Booking booking = new Booking(id, accomodationId, startTime, endTime, approvalStatus, creationDate);
+			Booking booking = new Booking(id, userId, accomodationId, startTime, endTime, approvalStatus, creationDate);
 
 
 			// Assert
 			Assert.Equal(id, booking.Id);
+			Assert.Equal(userId, booking.UserId);
+			Assert.Equal(accomodationId, booking.AccomodationId);
 			Assert.Equal(startTime, booking.StartTime);
 			Assert.Equal(endTime, booking.EndTime);
 			Assert.Equal(approvalStatus, booking.ApprovalStatus);
@@ -68,6 +71,7 @@ namespace xUnitTests
 			// Arrange
 			int id = 1;
 			int accomodationId = 1;
+			int userId = 1;
 			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now.AddDays(-2));
 			DateOnly endTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
 			string approvalStatus = "Pending";
@@ -76,7 +80,7 @@ namespace xUnitTests
 			// Act
 			// Assert
 			Assert.Throws<Exception>(
-				() => new Booking(id, accomodationId, startTime, endTime, approvalStatus, creationDate));
+				() => new Booking(id, userId, accomodationId, startTime, endTime, approvalStatus, creationDate));
 		}
 
 		//4) EndDate > StartDate
@@ -86,6 +90,7 @@ namespace xUnitTests
 			// Arrange
 			int id = 1;
 			int accomodationId = 1;
+			int userId = 1;
 			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
 			DateOnly endTime = DateOnly.FromDateTime(DateTime.Now);
 			string approvalStatus = "Pending";
@@ -93,7 +98,7 @@ namespace xUnitTests
 
 			// Assert
 			Assert.Throws<Exception>(
-				() => new Booking(id, accomodationId, startTime, endTime, approvalStatus, creationDate));
+				() => new Booking(id, userId, accomodationId, startTime, endTime, approvalStatus, creationDate));
 		}
 	}
 }

@@ -38,6 +38,7 @@ namespace xUnitTests
 		{
 			// Arrange'
 			int accomodationId = 1;
+			int userId = 1;
 			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now);
 			DateOnly endTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
 			string approvalStatus = "Pending";
@@ -48,12 +49,14 @@ namespace xUnitTests
 			BookingFactory bookingFactory = new BookingFactory(repository.Object);
 
 			// Act
-			Booking booking = bookingFactory.CreateBooking(startTime, endTime, accomodationId);
+			Booking booking = bookingFactory.CreateBooking(startTime, endTime, accomodationId, userId);
 
 
 			// Assert
 			Assert.Equal(startTime, booking.StartTime);
-			Assert.Equal(endTime, booking.EndTime);
+            Assert.Equal(userId, booking.UserId);
+            Assert.Equal(accomodationId, booking.AccomodationId);
+            Assert.Equal(endTime, booking.EndTime);
 			Assert.Equal(approvalStatus, booking.ApprovalStatus);
 			Assert.Equal(creationDate, booking.CreationDate);
 		}
@@ -63,19 +66,21 @@ namespace xUnitTests
 		{
 			// Test Entity Arrange
 			int accomodationId = 1;
+			int userId = 1;
 			DateOnly startTime = DateOnly.FromDateTime(DateTime.Now);
 			DateOnly endTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
 
 			// Moq Arrange
 			int moqId = 1;
 			int moqAccomodationId = 1;
+			int moqUserId = 1;
 			DateOnly moqStartTime = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
 			DateOnly moqEndTime = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
 			string moqApprovalStatus = "Approved";
 			DateTime mogCreationDate = DateTime.Parse(DateTime.Now.ToShortTimeString());
 
 			List<Booking> iBookingQueryReponseList = new List<Booking>();
-			iBookingQueryReponseList.Add(new Booking(moqId, moqAccomodationId, moqStartTime, moqEndTime, moqApprovalStatus, mogCreationDate));
+			iBookingQueryReponseList.Add(new Booking(moqId, moqUserId, moqAccomodationId, moqStartTime, moqEndTime, moqApprovalStatus, mogCreationDate));
 
 			Mock<IBookingQueryRepository> repository = new Mock<IBookingQueryRepository>();
 			repository
@@ -88,7 +93,7 @@ namespace xUnitTests
 			// Act
 			// Assert
 			Assert.Throws<OverlappingBookingException>(
-				() => bookingFactory.CreateBooking(startTime, endTime, accomodationId));
+				() => bookingFactory.CreateBooking(startTime, endTime, accomodationId, userId));
 		}
 	}
 }
